@@ -40,7 +40,7 @@ export default {
         const items = [
             {
                 icon: "el-icon-lx-home",
-                index: "/dashboard",
+                index: "/main/dashboard",
                 title: "首页",
             },
             {
@@ -49,7 +49,7 @@ export default {
                 title: "用户管理",
                 subs: [
                     {
-                        index: "/user_list",
+                        index: "/main/user_list",
                         title: "用户列表",
                     },
                 ]
@@ -60,7 +60,7 @@ export default {
                 title: "部门管理",
                 subs: [
                     {
-                        index: "/department_list",
+                        index: "/main/department_list",
                         title: "部门列表",
                     },
                 ]
@@ -71,7 +71,7 @@ export default {
                 title: "角色管理",
                 subs: [
                     {
-                        index: "/role_list",
+                        index: "/main/role_list",
                         title: "角色列表",
                     },
                     
@@ -83,7 +83,7 @@ export default {
                 title: "权限管理",
                 subs: [
                     {
-                        index: "/permissions",
+                        index: "/main/permissions",
                         title: "权限列表",
                     },
                     
@@ -95,7 +95,7 @@ export default {
                 title: "文件管理",
                 subs: [
                     {
-                        index: "/doc_list",
+                        index: "/main/doc_list",
                         title: "文件列表",
                     },
                     

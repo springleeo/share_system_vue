@@ -16,99 +16,133 @@ const routes = [
                 meta: {
                     title: '系统首页'
                 },
-                component: () => import( /* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
-            }, {
-                path: "/table",
-                name: "basetable",
+                component: () => import ("../views/Dashboard.vue")
+            }, 
+            {
+                path: "user_list",
+                name: "user_list",
                 meta: {
-                    title: '表格'
+                    title: '用户列表'
                 },
-                component: () => import( /* webpackChunkName: "table" */ "../views/BaseTable.vue")
-            }, {
-                path: "/charts",
+                component: () => import ("../views/UserList.vue")
+            }, 
+            {
+                path: "department_list",
+                name: "department_list",
+                meta: {
+                    title: '部门列表'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/DepartmentList.vue")
+            }, 
+            {
+                path: "role_list",
+                name: "role_list",
+                meta: {
+                    title: '角色列表'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/RoleList.vue")
+            }, 
+            {
+                path: "permissions",
+                name: "permissions",
+                meta: {
+                    title: '权限列表'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/PermissionList.vue")
+            }, 
+            {
+                path: "doc_list",
+                name: "doc_list",
+                meta: {
+                    title: '文档列表'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/DocList.vue")
+            }, 
+            {
+                path: "charts",
                 name: "basecharts",
                 meta: {
                     title: '图表'
                 },
-                component: () => import( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
+                component: () => import ( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
             }, {
-                path: "/form",
+                path: "form",
                 name: "baseform",
                 meta: {
                     title: '表单'
                 },
-                component: () => import( /* webpackChunkName: "form" */ "../views/BaseForm.vue")
+                component: () => import ( /* webpackChunkName: "form" */ "../views/BaseForm.vue")
             }, {
-                path: "/tabs",
+                path: "tabs",
                 name: "tabs",
                 meta: {
                     title: 'tab标签'
                 },
-                component: () => import( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
+                component: () => import ( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
             }, {
-                path: "/donate",
+                path: "donate",
                 name: "donate",
                 meta: {
                     title: '鼓励作者'
                 },
-                component: () => import( /* webpackChunkName: "donate" */ "../views/Donate.vue")
+                component: () => import ( /* webpackChunkName: "donate" */ "../views/Donate.vue")
             }, {
-                path: "/permission",
+                path: "permission",
                 name: "permission",
                 meta: {
                     title: '权限管理',
                     permission: true
                 },
-                component: () => import( /* webpackChunkName: "permission" */ "../views/Permission.vue")
+                component: () => import ( /* webpackChunkName: "permission" */ "../views/Permission.vue")
             }, {
-                path: "/i18n",
+                path: "i18n",
                 name: "i18n",
                 meta: {
                     title: '国际化语言'
                 },
-                component: () => import( /* webpackChunkName: "i18n" */ "../views/I18n.vue")
+                component: () => import ( /* webpackChunkName: "i18n" */ "../views/I18n.vue")
             }, {
-                path: "/upload",
+                path: "upload",
                 name: "upload",
                 meta: {
                     title: '上传插件'
                 },
-                component: () => import( /* webpackChunkName: "upload" */ "../views/Upload.vue")
+                component: () => import ( /* webpackChunkName: "upload" */ "../views/Upload.vue")
             }, {
-                path: "/icon",
+                path: "icon",
                 name: "icon",
                 meta: {
                     title: '自定义图标'
                 },
-                component: () => import( /* webpackChunkName: "icon" */ "../views/Icon.vue")
+                component: () => import ( /* webpackChunkName: "icon" */ "../views/Icon.vue")
             }, {
-                path: '/404',
+                path: '404',
                 name: '404',
                 meta: {
                     title: '找不到页面'
                 },
-                component: () => import(/* webpackChunkName: "404" */ '../views/404.vue')
+                component: () => import (/* webpackChunkName: "404" */ '../views/404.vue')
             }, {
-                path: '/403',
+                path: '403',
                 name: '403',
                 meta: {
                     title: '没有权限'
                 },
-                component: () => import(/* webpackChunkName: "403" */ '../views/403.vue')
+                component: () => import (/* webpackChunkName: "403" */ '../views/403.vue')
             }, {
-                path: '/user',
+                path: 'user',
                 name: 'user',
                 meta: {
                     title: '个人中心'
                 },
-                component: () => import(/* webpackChunkName: "user" */ '../views/User.vue')
+                component: () => import (/* webpackChunkName: "user" */ '../views/User.vue')
             }, {
-                path: '/editor',
+                path: 'editor',
                 name: 'editor',
                 meta: {
                     title: '富文本编辑器'
                 },
-                component: () => import(/* webpackChunkName: "editor" */ '../views/Editor.vue')
+                component: () => import (/* webpackChunkName: "editor" */ '../views/Editor.vue')
             }
         ]
     },
