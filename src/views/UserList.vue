@@ -30,7 +30,7 @@
 
       <!-- 列表数据 -->
       <el-table
-        :data="tableData"
+        :data="users"
         border
         class="table"
         ref="multipleTable"
@@ -92,13 +92,14 @@
       </el-table>
       <div class="pagination">
         <el-pagination
+          @size-change="ChangePageSize"
+          @current-change="ChangeCurrentPage"
           background
           layout="total, sizes, prev, pager, next, jumper"
           :current-page="CurrentPage"
           :page-size="pageSize"
           :page-sizes="pageSizes"
           :total="pageTotal"
-          @current-change="PageChange"
         ></el-pagination>
       </div>
     </div>
@@ -146,7 +147,7 @@ export default {
         address: "",
         username: "",
       },
-      tableData: [
+      users: [
         {
           id: 1,
           name: "张三",
@@ -175,14 +176,36 @@ export default {
           create_time: "2020-5-12",
         },
       ],
-      CurrentPage: 1,
+      currentPage: 1,
       pageSize: 1,
-      pageTotal: 3,
+      pageTotal: 300,
       pageSizes: [10, 20, 30],
     };
   },
+  mounted() {
+    this.getUsers();
+  },
+
   methods: {
-    PageChange() {},
+    // 修改每页显示的条数
+    ChangePageSize(size) {
+      this.pageSize = size;
+    },
+    // 修改当前页码
+    ChangeCurrentPage(current_page) {
+      this.CurrentPage = current_page;
+    },
+    // 获取后端数据
+    getUsers() {
+      this.axios.get("/user/user_list").then((rep) => {
+        if (rep.status == 200) {
+          this.users = rep.data.users;
+          this.pageSize = rep.data.pageSize;
+          this.pageTotal = rep.data.pageTotal;
+          this.currentPage = rep.data.currentPage;
+        }
+      });
+    },
   },
 };
 </script>
@@ -217,6 +240,5 @@ export default {
   width: 40px;
   height: 40px;
 }
-
 </style>
 
