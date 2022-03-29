@@ -87,14 +87,23 @@
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
             <el-button
+              class="red"
               type="text"
-              icon="el-icon-edit"
-              @click="handleEdit(scope.$index, scope.row)"
+              @click="active(scope.row.id, scope.row.state)"
+              v-if="scope.row.state == 1"
+              >停用
+            </el-button>
+            <el-button
+              type="text"
+              @click="active(scope.row.id, scope.row.state)"
+              v-if="scope.row.state == 2"
+              >启用
+            </el-button>
+            <el-button type="text" @click="handleEdit(scope.$index, scope.row)"
               >编辑
             </el-button>
             <el-button
               type="text"
-              icon="el-icon-delete"
               class="red"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
@@ -189,7 +198,7 @@ export default {
         },
       ],
       currentPage: 1,
-      pageSize: 3,
+      pageSize: 5,
       pageTotal: 300,
       pageSizes: [5, 10, 15],
     };
@@ -202,10 +211,12 @@ export default {
     // 修改每页显示的条数
     ChangePageSize(size) {
       this.pageSize = size;
+      this.getUsers();
     },
     // 修改当前页码
     ChangeCurrentPage(current_page) {
-      this.CurrentPage = current_page;
+      this.currentPage = current_page;
+      this.getUsers();
     },
     // 获取后端数据
     getUsers() {
@@ -224,6 +235,17 @@ export default {
             this.pageTotal = rep.data.pageTotal;
             this.currentPage = rep.data.currentPage;
           }
+        });
+    },
+    active(id, state) {
+      this.$axios
+        .post("/user/active", {
+          id: id,
+          state: state,
+        })
+        .then((rep) => {
+          alert(rep.data.msg);
+          window.location.reload("/main/user_list");
         });
     },
   },
