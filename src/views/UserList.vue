@@ -42,7 +42,7 @@
           width="55"
           align="center"
         ></el-table-column>
-        <el-table-column prop="name" label="用户名"></el-table-column>
+        <el-table-column prop="username" label="用户名"></el-table-column>
         <el-table-column prop="department" label="部门"></el-table-column>
         <el-table-column label="头像(查看大图)" align="center">
           <template #default="scope">
@@ -54,19 +54,31 @@
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table-column prop="addr" label="地址"></el-table-column>
 
         <el-table-column label="状态" align="center">
           <template #default="scope">
             <el-tag
               :type="
-                scope.row.state === '启用'
+                scope.row.state === 1
                   ? 'success'
-                  : scope.row.state === '停用'
+                  : scope.row.state === 2
                   ? 'danger'
                   : ''
               "
-              >{{ scope.row.state }}</el-tag
+              v-if="scope.row.state == 1"
+              >启用</el-tag
+            >
+            <el-tag
+              :type="
+                scope.row.state === 1
+                  ? 'success'
+                  : scope.row.state === 2
+                  ? 'danger'
+                  : ''
+              "
+              v-if="scope.row.state == 2"
+              >停用</el-tag
             >
           </template>
         </el-table-column>
@@ -108,7 +120,7 @@
     <el-dialog title="编辑" v-model="editVisible" width="30%">
       <el-form label-width="70px">
         <el-form-item label="用户名">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item label="部门">
           <el-input v-model="form.department"></el-input>
@@ -118,7 +130,7 @@
         </el-form-item>
 
         <el-form-item label="地址">
-          <el-input v-model="form.address"></el-input>
+          <el-input v-model="form.addr"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-input v-model="form.state"></el-input>
@@ -150,36 +162,36 @@ export default {
       users: [
         {
           id: 1,
-          name: "张三",
+          username: "张三",
           department: "财务部",
           avatar: "/src/assets/img/img.jpg",
-          address: "北京",
-          state: "启用",
+          addr: "北京",
+          state: "1",
           create_time: "2021-3-21",
         },
         {
           id: 2,
-          name: "李四",
+          username: "李四",
           department: "市场部",
           avatar: "/src/assets/img/img.jpg",
-          address: "长沙",
-          state: "停用",
+          addr: "长沙",
+          state: "2",
           create_time: "2020-5-12",
         },
         {
           id: 3,
-          name: "王五",
+          username: "王五",
           department: "市场部",
           avatar: "/src/assets/img/img.jpg",
-          address: "长沙",
-          state: "停用",
+          addr: "长沙",
+          state: "2",
           create_time: "2020-5-12",
         },
       ],
       currentPage: 1,
-      pageSize: 1,
+      pageSize: 3,
       pageTotal: 300,
-      pageSizes: [10, 20, 30],
+      pageSizes: [5, 10, 15],
     };
   },
   mounted() {
@@ -197,14 +209,22 @@ export default {
     },
     // 获取后端数据
     getUsers() {
-      this.axios.get("/user/user_list").then((rep) => {
-        if (rep.status == 200) {
-          this.users = rep.data.users;
-          this.pageSize = rep.data.pageSize;
-          this.pageTotal = rep.data.pageTotal;
-          this.currentPage = rep.data.currentPage;
-        }
-      });
+      this.$axios
+        .get("/user/user_list", {
+          params: {
+            page_size: this.pageSize,
+            current_page: this.currentPage,
+          },
+        })
+        .then((rep) => {
+          console.log(rep);
+          if (rep.status == 200) {
+            this.users = rep.data.users;
+            this.pageSize = rep.data.pageSize;
+            this.pageTotal = rep.data.pageTotal;
+            this.currentPage = rep.data.currentPage;
+          }
+        });
     },
   },
 };
