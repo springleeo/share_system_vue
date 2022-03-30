@@ -48,7 +48,7 @@
           <template #default="scope">
             <el-image
               class="table-td-thumb"
-              :src="scope.row.avatar"
+              :src="'http://127.0.0.1:8080'+scope.row.avatar"
               :preview-src-list="[scope.row.avatar]"
             >
             </el-image>
@@ -275,6 +275,25 @@ export default {
         this.form[item] = row[item];
       });
       this.editVisible = true;
+    },
+    saveEdit() {
+      const formData = new FormData();
+      formData.append("id", this.form.id);
+      formData.append("username", this.form.username);
+      formData.append("pwd", this.form.pwd);
+      formData.append("department", "市场部");
+      formData.append("addr", this.form.addr);
+      formData.append("state", this.form.state);
+      formData.append(
+        "avatar",
+        document.querySelector("input[type=file]").files[0]
+      );
+      this.$axios.post("/user/update", formData).then((rep) => {
+        if (rep.data.code == 200) {
+          alert("更新成功");
+          window.location.reload("/main/user_list");
+        }
+      });
     },
   },
 };
