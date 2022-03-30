@@ -99,13 +99,13 @@
               v-if="scope.row.state == 2"
               >启用
             </el-button>
-            <el-button type="text" @click="handleEdit(scope.$index, scope.row)"
+            <el-button type="text" @click="handleEdit(scope.row.id, scope.row)"
               >编辑
             </el-button>
             <el-button
               type="text"
               class="red"
-              @click="handleDelete(scope.$index, scope.row)"
+              @click="handleDelete(scope.row.id, scope.row)"
               >删除</el-button
             >
           </template>
@@ -131,18 +131,27 @@
         <el-form-item label="用户名">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="form.pwd"></el-input>
+        </el-form-item>
         <el-form-item label="部门">
           <el-input v-model="form.department"></el-input>
         </el-form-item>
         <el-form-item label="头像">
           <el-image class="table-td-thumb" :src="form.avatar"></el-image>
         </el-form-item>
+        <el-form-item label="更换头像">
+          <el-input type="file" v-model="form.new_avatar"></el-input>
+        </el-form-item>
 
         <el-form-item label="地址">
           <el-input v-model="form.addr"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-input v-model="form.state"></el-input>
+          <el-radio-group v-model="form.state">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="2">停用</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
 
@@ -175,7 +184,7 @@ export default {
           department: "财务部",
           avatar: "/src/assets/img/img.jpg",
           addr: "北京",
-          state: "1",
+          state: 1,
           create_time: "2021-3-21",
         },
         {
@@ -184,7 +193,7 @@ export default {
           department: "市场部",
           avatar: "/src/assets/img/img.jpg",
           addr: "长沙",
-          state: "2",
+          state: 1,
           create_time: "2020-5-12",
         },
         {
@@ -193,7 +202,7 @@ export default {
           department: "市场部",
           avatar: "/src/assets/img/img.jpg",
           addr: "长沙",
-          state: "2",
+          state: 1,
           create_time: "2020-5-12",
         },
       ],
@@ -201,6 +210,18 @@ export default {
       pageSize: 5,
       pageTotal: 300,
       pageSizes: [5, 10, 15],
+      editVisible: false,
+      form: {
+        id: 3,
+        username: "王五",
+        pwd: "",
+        department: "市场部",
+        avatar: "/src/assets/img/img.jpg",
+        new_avatar: "",
+        addr: "长沙",
+        state: 2,
+        create_time: "2020-5-12",
+      },
     };
   },
   mounted() {
@@ -228,7 +249,7 @@ export default {
           },
         })
         .then((rep) => {
-          console.log(rep);
+          // console.log(rep);
           if (rep.status == 200) {
             this.users = rep.data.users;
             this.pageSize = rep.data.pageSize;
@@ -245,8 +266,15 @@ export default {
         })
         .then((rep) => {
           alert(rep.data.msg);
+          // this.form.state = rep.data.state;
           window.location.reload("/main/user_list");
         });
+    },
+    handleEdit(id, row) {
+      Object.keys(this.form).forEach((item) => {
+        this.form[item] = row[item];
+      });
+      this.editVisible = true;
     },
   },
 };
