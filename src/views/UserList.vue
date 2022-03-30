@@ -255,6 +255,7 @@ export default {
             this.pageSize = rep.data.pageSize;
             this.pageTotal = rep.data.pageTotal;
             this.currentPage = rep.data.currentPage;
+            this.create_time = rep.data.create_time;
           }
         });
     },
@@ -284,6 +285,7 @@ export default {
       formData.append("department", "市场部");
       formData.append("addr", this.form.addr);
       formData.append("state", this.form.state);
+      formData.append("state", this.form.create_time);
       formData.append(
         "avatar",
         document.querySelector("input[type=file]").files[0]
