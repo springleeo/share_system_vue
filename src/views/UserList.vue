@@ -27,7 +27,10 @@
           >搜索</el-button
         >
       </div>
-
+      <!-- 添加数据 -->
+      <el-button type="primary" class="el-icon-lx-add" @click="handleAdd"
+        >添加</el-button
+      >
       <!-- 列表数据 -->
       <el-table
         :data="users"
@@ -102,10 +105,7 @@
             <el-button type="text" @click="handleEdit(scope.row.id, scope.row)"
               >编辑
             </el-button>
-            <el-button
-              type="text"
-              class="red"
-              @click="handleDelete(scope.row)"
+            <el-button type="text" class="red" @click="handleDelete(scope.row)"
               >删除</el-button
             >
           </template>
@@ -165,6 +165,41 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 添加弹出框 -->
+    <el-dialog title="添加" v-model="addVisible" width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="用户名">
+          <el-input v-model="addForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="addForm.pwd"></el-input>
+        </el-form-item>
+        <el-form-item label="部门">
+          <el-input v-model="addForm.department"></el-input>
+        </el-form-item>
+        <el-form-item label="头像">
+          <el-input type="file" v-model="addForm.avatar"></el-input>
+        </el-form-item>
+
+        <el-form-item label="地址">
+          <el-input v-model="addForm.addr"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio-group v-model="addForm.state">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="2">停用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveAdd">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -214,6 +249,7 @@ export default {
       pageTotal: 300,
       pageSizes: [5, 10, 15],
       editVisible: false,
+      addVisible: false,
       form: {
         id: 3,
         username: "王五",
@@ -224,6 +260,14 @@ export default {
         addr: "长沙",
         state: 2,
         create_time: "2020-5-12",
+      },
+      addForm: {
+        username: "",
+        pwd: "",
+        department: "市场部",
+        avatar: "",
+        addr: "",
+        state: 0,
       },
     };
   },
@@ -262,6 +306,7 @@ export default {
           }
         });
     },
+    // 启用停用用户
     active(id, state) {
       this.$axios
         .post("/user/active", {
@@ -274,11 +319,19 @@ export default {
           window.location.reload("/main/user_list");
         });
     },
+    //弹出编辑框
     handleEdit(id, row) {
       Object.keys(this.form).forEach((item) => {
         this.form[item] = row[item];
       });
       this.editVisible = true;
+    },
+    //弹出添加框
+    handleAdd() {
+      // Object.keys(this.addForm).forEach((item) => {
+      //   this.addForm[item] = row[item];
+      // });
+      this.addVisible = true;
     },
     saveEdit() {
       const formData = new FormData();
@@ -296,6 +349,25 @@ export default {
       this.$axios.post("/user/edit", formData).then((rep) => {
         if (rep.data.code == 200) {
           alert("更新成功");
+          window.location.reload("/main/user_list");
+          window.location.reload();
+        }
+      });
+    },
+    saveAdd() {
+      const addFormData = new FormData();
+      addFormData.append("username", this.addForm.username);
+      addFormData.append("pwd", this.addForm.pwd);
+      addFormData.append("department", "市场部");
+      addFormData.append("addr", this.addForm.addr);
+      addFormData.append("state", this.addForm.state);
+      addFormData.append(
+        "avatar",
+        document.querySelector("input[type=file]").files[0]
+      );
+      this.$axios.post("/user/add", addFormData).then((rep) => {
+        if (rep.data.code == 200) {
+          alert("添加成功");
           window.location.reload("/main/user_list");
           window.location.reload();
         }
