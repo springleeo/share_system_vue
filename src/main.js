@@ -63,3 +63,4 @@ axios.interceptors.response.use(
 app.config.globalProperties.$router = router
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$auth = auth
+app.config.globalProperties.baseURL = 'http://127.0.0.1:8080'

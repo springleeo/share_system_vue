@@ -48,7 +48,7 @@
           <template #default="scope">
             <el-image
               class="table-td-thumb"
-              :src="'http://127.0.0.1:8080'+scope.row.avatar"
+              :src="baseURL + scope.row.avatar"
               :preview-src-list="[scope.row.avatar]"
             >
             </el-image>
@@ -105,7 +105,7 @@
             <el-button
               type="text"
               class="red"
-              @click="handleDelete(scope.row.id, scope.row)"
+              @click="handleDelete(scope.row)"
               >删除</el-button
             >
           </template>
@@ -138,7 +138,10 @@
           <el-input v-model="form.department"></el-input>
         </el-form-item>
         <el-form-item label="头像">
-          <el-image class="table-td-thumb" :src="form.avatar"></el-image>
+          <el-image
+            class="table-td-thumb"
+            :src="baseURL + form.avatar"
+          ></el-image>
         </el-form-item>
         <el-form-item label="更换头像">
           <el-input type="file" v-model="form.new_avatar"></el-input>
@@ -285,17 +288,30 @@ export default {
       formData.append("department", "市场部");
       formData.append("addr", this.form.addr);
       formData.append("state", this.form.state);
-      formData.append("state", this.form.create_time);
+      // formData.append("create_time", this.form.create_time);
       formData.append(
         "avatar",
         document.querySelector("input[type=file]").files[0]
       );
-      this.$axios.post("/user/update", formData).then((rep) => {
+      this.$axios.post("/user/edit", formData).then((rep) => {
         if (rep.data.code == 200) {
           alert("更新成功");
           window.location.reload("/main/user_list");
+          window.location.reload();
         }
       });
+    },
+    handleDelete(row) {
+      this.$axios
+        .post("/user/delete", {
+          // 后端是UserRet，只要传后端参数名称就行。后端可以直接使用user.id
+          id: row.id,
+        })
+        .then((rep) => {
+          alert(rep.data.msg);
+          window.location.reload("/main/user_list");
+          window.location.reload();
+        });
     },
   },
 };
