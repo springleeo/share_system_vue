@@ -245,9 +245,9 @@ export default {
         },
       ],
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 2,
       pageTotal: 300,
-      pageSizes: [5, 10, 15],
+      pageSizes: [2, 4, 6],
       editVisible: false,
       addVisible: false,
       form: {
@@ -279,12 +279,20 @@ export default {
     // 修改每页显示的条数
     ChangePageSize(size) {
       this.pageSize = size;
-      this.getUsers();
+      if (this.query.username != "") {
+        this.queryUsername();
+      } else {
+        this.getUsers();
+      }
     },
     // 修改当前页码
     ChangeCurrentPage(current_page) {
       this.currentPage = current_page;
-      this.getUsers();
+      if (this.query.username != "") {
+        this.queryUsername();
+      } else {
+        this.getUsers();
+      }
     },
     // 获取后端数据
     getUsers() {
@@ -306,6 +314,35 @@ export default {
           }
         });
     },
+    queryUsername() {
+      this.$axios
+        .get("/user/query", {
+          params: {
+            username: this.query.username,
+            page_size: this.pageSize,
+            current_page: this.currentPage,
+          },
+        })
+        .then((rep) => {
+          if (rep.status == 200) {
+            this.users = rep.data.users;
+            this.pageSize = rep.data.pageSize;
+            this.pageTotal = rep.data.pageTotal;
+            this.currentPage = rep.data.currentPage;
+            this.create_time = rep.data.create_time;
+          }
+          // window.location.reload("/main/query");
+          // window.location.reload();
+        });
+    },
+    //搜索用户
+    handleSearch() {
+      if (this.query.username != "") {
+        this.queryUsername();
+      } else {
+        this.getUsers();
+      }
+    },
     // 启用停用用户
     active(id, state) {
       this.$axios
@@ -314,9 +351,14 @@ export default {
           state: state,
         })
         .then((rep) => {
-          alert(rep.data.msg);
+          // alert(this.query.username);
+          this.handleSearch();
           // this.form.state = rep.data.state;
-          window.location.reload("/main/user_list");
+          // if (this.query.username == "") {
+          //   window.location.reload("/main/user_list");
+          // } else {
+          //   window.location.reload("/main/query");
+          // }
         });
     },
     //弹出编辑框
