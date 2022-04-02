@@ -64,6 +64,7 @@ export default {
             // 跳转到后台首页
             this.$router.push("/main/dashboard");
           } else {
+            
             alert(rep.data.msg);
           }
         });

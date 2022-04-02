@@ -10,123 +10,119 @@
     <div class="container">
       <!-- 搜素 -->
       <div class="handle-box">
-        <el-select
-          v-model="query.address"
-          placeholder="部门"
-          class="handle-select mr10"
-        >
-          <el-option key="1" label="财务部" value="财务部"></el-option>
-          <el-option key="2" label="市场部" value="市场部"></el-option>
+        <el-select v-model="query.address"
+                   placeholder="部门"
+                   class="handle-select mr10">
+          <el-option key="1"
+                     label="财务部"
+                     value="财务部"></el-option>
+          <el-option key="2"
+                     label="市场部"
+                     value="市场部"></el-option>
         </el-select>
-        <el-input
-          v-model="query.username"
-          placeholder="用户名"
-          class="handle-input mr10"
-        ></el-input>
-        <el-button type="primary" icon="el-icon-search" @click="handleSearch"
-          >搜索</el-button
-        >
+        <el-input v-model="query.username"
+                  placeholder="用户名"
+                  class="handle-input mr10"></el-input>
+        <el-button type="primary"
+                   icon="el-icon-search"
+                   @click="handleSearch">搜索</el-button>
       </div>
       <!-- 添加数据 -->
-      <el-button type="primary" class="el-icon-lx-add" @click="handleAdd"
-        >添加</el-button
-      >
+      <div>
+        <el-button type="primary"
+                   class="el-icon-lx-add"
+                   id="addbottom"
+                   @click="handleAdd">添加</el-button>
+      </div>
+
       <!-- 列表数据 -->
-      <el-table
-        :data="users"
-        border
-        class="table"
-        ref="multipleTable"
-        header-cell-class-name="table-header"
-      >
-        <el-table-column
-          prop="id"
-          label="ID"
-          width="55"
-          align="center"
-        ></el-table-column>
-        <el-table-column prop="username" label="用户名"></el-table-column>
-        <el-table-column prop="department" label="部门"></el-table-column>
-        <el-table-column label="头像(查看大图)" align="center">
+      <el-table :data="users"
+                border
+                class="table"
+                ref="multipleTable"
+                header-cell-class-name="table-header">
+        <el-table-column prop="id"
+                         label="ID"
+                         width="55"
+                         align="center"></el-table-column>
+        <el-table-column prop="username"
+                         label="用户名"></el-table-column>
+        <el-table-column prop="department"
+                         label="部门"></el-table-column>
+        <el-table-column label="头像(查看大图)"
+                         align="center">
           <template #default="scope">
-            <el-image
-              class="table-td-thumb"
-              :src="baseURL + scope.row.avatar"
-              :preview-src-list="[scope.row.avatar]"
-            >
+            <el-image class="table-td-thumb"
+                      :src="baseURL + scope.row.avatar"
+                      :preview-src-list="[scope.row.avatar]">
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="addr" label="地址"></el-table-column>
+        <el-table-column prop="addr"
+                         label="地址"></el-table-column>
 
-        <el-table-column label="状态" align="center">
+        <el-table-column label="状态"
+                         align="center">
           <template #default="scope">
-            <el-tag
-              :type="
+            <el-tag :type="
                 scope.row.state === 1
                   ? 'success'
                   : scope.row.state === 2
                   ? 'danger'
                   : ''
               "
-              v-if="scope.row.state == 1"
-              >启用</el-tag
-            >
-            <el-tag
-              :type="
+                    v-if="scope.row.state == 1">启用</el-tag>
+            <el-tag :type="
                 scope.row.state === 1
                   ? 'success'
                   : scope.row.state === 2
                   ? 'danger'
                   : ''
               "
-              v-if="scope.row.state == 2"
-              >停用</el-tag
-            >
+                    v-if="scope.row.state == 2">停用</el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="create_time" label="注册时间"></el-table-column>
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column prop="create_time"
+                         label="注册时间"></el-table-column>
+        <el-table-column label="操作"
+                         width="180"
+                         align="center">
           <template #default="scope">
-            <el-button
-              class="red"
-              type="text"
-              @click="active(scope.row.id, scope.row.state)"
-              v-if="scope.row.state == 1"
-              >停用
+            <el-button class="red"
+                       type="text"
+                       @click="active(scope.row.id, scope.row.state)"
+                       v-if="scope.row.state == 1">停用
             </el-button>
-            <el-button
-              type="text"
-              @click="active(scope.row.id, scope.row.state)"
-              v-if="scope.row.state == 2"
-              >启用
+            <el-button type="text"
+                       @click="active(scope.row.id, scope.row.state)"
+                       v-if="scope.row.state == 2">启用
             </el-button>
-            <el-button type="text" @click="handleEdit(scope.row.id, scope.row)"
-              >编辑
+            <el-button type="text"
+                       @click="handleEdit(scope.row.id, scope.row)">编辑
             </el-button>
-            <el-button type="text" class="red" @click="handleDelete(scope.row)"
-              >删除</el-button
-            >
+            <el-button type="text"
+                       class="red"
+                       @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="pagination">
-        <el-pagination
-          @size-change="ChangePageSize"
-          @current-change="ChangeCurrentPage"
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :current-page="CurrentPage"
-          :page-size="pageSize"
-          :page-sizes="pageSizes"
-          :total="pageTotal"
-        ></el-pagination>
+        <el-pagination @size-change="ChangePageSize"
+                       @current-change="ChangeCurrentPage"
+                       background
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :current-page="CurrentPage"
+                       :page-size="pageSize"
+                       :page-sizes="pageSizes"
+                       :total="pageTotal"></el-pagination>
       </div>
     </div>
 
     <!-- 编辑弹出框 -->
-    <el-dialog title="编辑" v-model="editVisible" width="30%">
+    <el-dialog title="编辑"
+               v-model="editVisible"
+               width="30%">
       <el-form label-width="70px">
         <el-form-item label="用户名">
           <el-input v-model="form.username"></el-input>
@@ -138,13 +134,12 @@
           <el-input v-model="form.department"></el-input>
         </el-form-item>
         <el-form-item label="头像">
-          <el-image
-            class="table-td-thumb"
-            :src="baseURL + form.avatar"
-          ></el-image>
+          <el-image class="table-td-thumb"
+                    :src="baseURL + form.avatar"></el-image>
         </el-form-item>
         <el-form-item label="更换头像">
-          <el-input type="file" v-model="form.new_avatar"></el-input>
+          <el-input type="file"
+                    v-model="form.new_avatar"></el-input>
         </el-form-item>
 
         <el-form-item label="地址">
@@ -161,13 +156,16 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveEdit">确 定</el-button>
+          <el-button type="primary"
+                     @click="saveEdit">确 定</el-button>
         </span>
       </template>
     </el-dialog>
 
     <!-- 添加弹出框 -->
-    <el-dialog title="添加" v-model="addVisible" width="30%">
+    <el-dialog title="添加"
+               v-model="addVisible"
+               width="30%">
       <el-form label-width="70px">
         <el-form-item label="用户名">
           <el-input v-model="addForm.username"></el-input>
@@ -179,7 +177,8 @@
           <el-input v-model="addForm.department"></el-input>
         </el-form-item>
         <el-form-item label="头像">
-          <el-input type="file" v-model="addForm.avatar"></el-input>
+          <el-input type="file"
+                    v-model="addForm.avatar"></el-input>
         </el-form-item>
 
         <el-form-item label="地址">
@@ -196,7 +195,8 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveAdd">确 定</el-button>
+          <el-button type="primary"
+                     @click="saveAdd">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -209,7 +209,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { fetchData } from "../api/index";
 
 export default {
-  data() {
+  data () {
     return {
       query: {
         address: "",
@@ -271,13 +271,13 @@ export default {
       },
     };
   },
-  mounted() {
+  mounted () {
     this.getUsers();
   },
 
   methods: {
     // 修改每页显示的条数
-    ChangePageSize(size) {
+    ChangePageSize (size) {
       this.pageSize = size;
       if (this.query.username != "") {
         this.queryUsername();
@@ -286,7 +286,7 @@ export default {
       }
     },
     // 修改当前页码
-    ChangeCurrentPage(current_page) {
+    ChangeCurrentPage (current_page) {
       this.currentPage = current_page;
       if (this.query.username != "") {
         this.queryUsername();
@@ -295,7 +295,7 @@ export default {
       }
     },
     // 获取后端数据
-    getUsers() {
+    getUsers () {
       this.$axios
         .get("/user/user_list", {
           params: {
@@ -314,7 +314,7 @@ export default {
           }
         });
     },
-    queryUsername() {
+    queryUsername () {
       this.$axios
         .get("/user/query", {
           params: {
@@ -336,7 +336,7 @@ export default {
         });
     },
     //搜索用户
-    handleSearch() {
+    handleSearch () {
       if (this.query.username != "") {
         this.queryUsername();
       } else {
@@ -344,7 +344,7 @@ export default {
       }
     },
     // 启用停用用户
-    active(id, state) {
+    active (id, state) {
       this.$axios
         .post("/user/active", {
           id: id,
@@ -362,20 +362,20 @@ export default {
         });
     },
     //弹出编辑框
-    handleEdit(id, row) {
+    handleEdit (id, row) {
       Object.keys(this.form).forEach((item) => {
         this.form[item] = row[item];
       });
       this.editVisible = true;
     },
     //弹出添加框
-    handleAdd() {
+    handleAdd () {
       // Object.keys(this.addForm).forEach((item) => {
       //   this.addForm[item] = row[item];
       // });
       this.addVisible = true;
     },
-    saveEdit() {
+    saveEdit () {
       const formData = new FormData();
       formData.append("id", this.form.id);
       formData.append("username", this.form.username);
@@ -396,7 +396,7 @@ export default {
         }
       });
     },
-    saveAdd() {
+    saveAdd () {
       const addFormData = new FormData();
       addFormData.append("username", this.addForm.username);
       addFormData.append("pwd", this.addForm.pwd);
@@ -415,7 +415,7 @@ export default {
         }
       });
     },
-    handleDelete(row) {
+    handleDelete (row) {
       this.$axios
         .post("/user/delete", {
           // 后端是UserRet，只要传后端参数名称就行。后端可以直接使用user.id
@@ -460,6 +460,9 @@ export default {
   margin: auto;
   width: 40px;
   height: 40px;
+}
+#addbottom {
+  margin-bottom: 10px;
 }
 </style>
 
