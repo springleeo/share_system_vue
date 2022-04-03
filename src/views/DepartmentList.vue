@@ -36,7 +36,7 @@
                          label="部门主管"></el-table-column>
         <el-table-column prop="desc"
                          label="部门职责"></el-table-column>
-        <el-table-column label="状态"
+        <!-- <el-table-column label="状态"
                          align="center">
           <template #default="scope">
             <el-tag :type="
@@ -56,7 +56,7 @@
               "
                     v-if="scope.row.state == 2">停用</el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column prop="create_time"
                          label="创建时间"></el-table-column>
@@ -64,7 +64,7 @@
                          width="180"
                          align="center">
           <template #default="scope">
-            <el-button class="red"
+            <!-- <el-button class="red"
                        type="text"
                        @click="active(scope.row.id, scope.row.state)"
                        v-if="scope.row.state == 1">停用
@@ -72,7 +72,7 @@
             <el-button type="text"
                        @click="active(scope.row.id, scope.row.state)"
                        v-if="scope.row.state == 2">启用
-            </el-button>
+            </el-button> -->
             <el-button type="text"
                        icon="el-icon-edit"
                        @click="handleEdit(scope.row)">编辑
@@ -110,12 +110,12 @@
         <el-form-item label="部门描述">
           <el-input v-model="form.desc"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <!-- <el-form-item label="状态">
           <el-radio-group v-model="form.state">
             <el-radio :label=1>启用</el-radio>
             <el-radio :label=2>停用</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -139,12 +139,12 @@
         <el-form-item label="部门描述">
           <el-input v-model="addForm.desc"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <!-- <el-form-item label="状态">
           <el-radio-group v-model="addForm.state">
             <el-radio :label=1>启用</el-radio>
             <el-radio :label=2>停用</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -178,7 +178,7 @@ export default {
           name: "财务部",
           leader: "财务部",
           desc: "主管财务",
-          state: 1,
+          // state: 1,
           create_time: "2021-3-21",
         },
         {
@@ -186,7 +186,7 @@ export default {
           name: "市场部",
           leader: "市场部",
           desc: "主管市场",
-          state: 1,
+          // state: 1,
           create_time: "2021-3-21",
         },
         {
@@ -194,7 +194,7 @@ export default {
           name: "人事部",
           leader: "人事部",
           desc: "主管人事",
-          state: 2,
+          // state: 2,
           create_time: "2021-3-21",
         },
       ],
@@ -209,13 +209,13 @@ export default {
         name: "财务部",
         leader: "张一",
         desc: "会计",
-        state: 1,
+        // state: 1,
       },
       addForm: {
         name: "",
         leader: "",
         desc: "",
-        state: 0,
+        // state: 0,
       }
     }
   },
@@ -302,7 +302,7 @@ export default {
         name: this.form.name,
         leader: this.form.leader,
         desc: this.form.desc,
-        state: this.form.state
+        // state: this.form.state
       }).then((rep) => {
         alert("更新成功");
         window.location.reload("/main/department_list");
@@ -310,29 +310,29 @@ export default {
       })
     },
     //启用停用
-    active (id, state) {
-      this.$axios.post('/department/active', {
-        id: id,
-        state: state
-      }).then((rep) => {
-        if (rep.data.state == 1) {
+    // active (id, state) {
+    //   this.$axios.post('/department/active', {
+    //     id: id,
+    //     state: state
+    //   }).then((rep) => {
+    //     if (rep.data.state == 1) {
 
-          ElMessage(
-            {
-              message: '启用成功',
-              type: 'success',
-            })
-        } else {
-          ElMessage(
-            {
-              message: '停用成功',
-              type: 'success',
-            }
-          )
-        }
-        this.handleSearch();
-      })
-    },
+    //       ElMessage(
+    //         {
+    //           message: '启用成功',
+    //           type: 'success',
+    //         })
+    //     } else {
+    //       ElMessage(
+    //         {
+    //           message: '停用成功',
+    //           type: 'success',
+    //         }
+    //       )
+    //     }
+    //     this.handleSearch();
+    //   })
+    // },
     //添加部门
     handleDelete (row) {
       ElMessageBox.confirm(
@@ -375,7 +375,7 @@ export default {
         name: this.addForm.name,
         leader: this.addForm.leader,
         desc: this.addForm.desc,
-        state: this.addForm.state
+        // state: this.addForm.state
       }).then((rep) => {
         if (rep.data.code == 200) {
           alert("添加成功");

@@ -47,7 +47,7 @@
                          align="center"></el-table-column>
         <el-table-column prop="username"
                          label="用户名"></el-table-column>
-        <el-table-column prop="department"
+        <el-table-column prop="name"
                          label="部门"></el-table-column>
         <el-table-column label="头像(查看大图)"
                          align="center">
@@ -131,7 +131,18 @@
           <el-input v-model="form.pwd"></el-input>
         </el-form-item>
         <el-form-item label="部门">
-          <el-input v-model="form.department"></el-input>
+          <!-- <el-input v-model="form.name"></el-input> -->
+          <el-select v-model="form.name"
+                     class="m-2"
+                     placeholder="Select"
+                     size="large">
+            <el-option v-model="form.name"
+                       :value="form.name"></el-option>
+            <el-option v-for="item, key in form.departments"
+                       :key="key"
+                       :value="item.name" />
+          </el-select>
+
         </el-form-item>
         <el-form-item label="头像">
           <el-image class="table-td-thumb"
@@ -174,7 +185,15 @@
           <el-input v-model="addForm.pwd"></el-input>
         </el-form-item>
         <el-form-item label="部门">
-          <el-input v-model="addForm.department"></el-input>
+          <el-select v-model="addForm.department"
+                     class="m-2"
+                     placeholder="Select"
+                     size="large">
+            <el-option v-for="item, key in addForm.departments"
+                       :key="key"
+                       :value="item.name" />
+          </el-select>
+
         </el-form-item>
         <el-form-item label="头像">
           <el-input type="file"
@@ -219,7 +238,7 @@ export default {
         {
           id: 1,
           username: "张三",
-          department: "财务部",
+          name: "财务部",
           avatar: "/src/assets/img/img.jpg",
           addr: "北京",
           state: 1,
@@ -228,7 +247,7 @@ export default {
         {
           id: 2,
           username: "李四",
-          department: "市场部",
+          name: "市场部",
           avatar: "/src/assets/img/img.jpg",
           addr: "长沙",
           state: 1,
@@ -237,7 +256,7 @@ export default {
         {
           id: 3,
           username: "王五",
-          department: "市场部",
+          name: "市场部",
           avatar: "/src/assets/img/img.jpg",
           addr: "长沙",
           state: 1,
@@ -254,7 +273,10 @@ export default {
         id: 3,
         username: "王五",
         pwd: "",
-        department: "市场部",
+        //部门名称
+        name: "",
+        //列表选择时用于展示的部门名称
+        departments: [],
         avatar: "/src/assets/img/img.jpg",
         new_avatar: "",
         addr: "长沙",
@@ -264,7 +286,9 @@ export default {
       addForm: {
         username: "",
         pwd: "",
-        department: "市场部",
+        department: '',
+        //列表选择时用于展示的部门名称
+        departments: [],
         avatar: "",
         addr: "",
         state: 0,
@@ -311,6 +335,7 @@ export default {
             this.pageTotal = rep.data.pageTotal;
             this.currentPage = rep.data.currentPage;
             this.create_time = rep.data.create_time;
+            console.log(rep.data.users);
           }
         });
     },
@@ -351,28 +376,57 @@ export default {
           state: state,
         })
         .then((rep) => {
-          // alert(this.query.username);
+          if (rep.data.state == 1) {
+            ElMessage(
+              {
+                message: '启用成功',
+                type: 'success',
+              })
+          } else {
+            ElMessage(
+              {
+                message: '停用成功',
+                type: 'success',
+              }
+            )
+          }
           this.handleSearch();
-          // this.form.state = rep.data.state;
-          // if (this.query.username == "") {
-          //   window.location.reload("/main/user_list");
-          // } else {
-          //   window.location.reload("/main/query");
-          // }
         });
     },
     //弹出编辑框
     handleEdit (id, row) {
+      //请求后端的部门数据
+      this.$axios.get('/user/get_departments_except_me', {
+        params: {
+          id: id
+        }
+      }).then(
+        (rep) => {
+          if (rep.status == 200) {
+            this.form.departments = rep.data.departments
+          }
+        }
+      )
+
+
+
+
       Object.keys(this.form).forEach((item) => {
         this.form[item] = row[item];
       });
+
       this.editVisible = true;
     },
     //弹出添加框
     handleAdd () {
-      // Object.keys(this.addForm).forEach((item) => {
-      //   this.addForm[item] = row[item];
-      // });
+      //请求后端的部门数据
+      this.$axios.get('/user/get_departments').then(
+        (rep) => {
+          if (rep.status == 200) {
+            this.addForm.departments = rep.data.departments
+          }
+        }
+      )
       this.addVisible = true;
     },
     saveEdit () {
@@ -380,7 +434,7 @@ export default {
       formData.append("id", this.form.id);
       formData.append("username", this.form.username);
       formData.append("pwd", this.form.pwd);
-      formData.append("department", "市场部");
+      formData.append("department_name", this.form.name);
       formData.append("addr", this.form.addr);
       formData.append("state", this.form.state);
       // formData.append("create_time", this.form.create_time);
@@ -400,7 +454,7 @@ export default {
       const addFormData = new FormData();
       addFormData.append("username", this.addForm.username);
       addFormData.append("pwd", this.addForm.pwd);
-      addFormData.append("department", "市场部");
+      addFormData.append("department_name", this.addForm.department);
       addFormData.append("addr", this.addForm.addr);
       addFormData.append("state", this.addForm.state);
       addFormData.append(
@@ -415,17 +469,49 @@ export default {
         }
       });
     },
+    // handleDelete (row) {
+    //   this.$axios
+    //     .post("/user/delete", {
+    //       // 后端是UserRet，只要传后端参数名称就行。后端可以直接使用user.id
+    //       id: row.id,
+    //     })
+    //     .then((rep) => {
+    //       alert(rep.data.msg);
+    //       window.location.reload("/main/user_list");
+    //       window.location.reload();
+    //     });
+    // },
     handleDelete (row) {
-      this.$axios
-        .post("/user/delete", {
-          // 后端是UserRet，只要传后端参数名称就行。后端可以直接使用user.id
-          id: row.id,
+      ElMessageBox.confirm(
+        '确认删除?',
+        {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+          draggable: true,
+        }
+      )
+        .then(() => {
+          this.$axios
+            .post("/user/delete", {
+              // 后端是DepartmentRet，只要传后端参数名称就行。后端可以直接使用department.id
+              id: row.id,
+            })
+            .then((rep) => {
+              ElMessage({
+                message: '删除成功',
+                type: 'success'
+              })
+              window.location.reload("/user/user_list");
+              window.location.reload();
+            });
         })
-        .then((rep) => {
-          alert(rep.data.msg);
-          window.location.reload("/main/user_list");
-          window.location.reload();
-        });
+        .catch(() => {
+          //   ElMessage({
+          //     type: 'info',
+          //     message: '取消',
+          //   })
+        })
     },
   },
 };
