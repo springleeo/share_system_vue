@@ -10,16 +10,15 @@
     <div class="container">
       <!-- 搜素 -->
       <div class="handle-box">
-        <el-select v-model="query.address"
+        <el-select v-model="query.department"
+                   class="m-2"
                    placeholder="部门"
-                   class="handle-select mr10">
-          <el-option key="1"
-                     label="财务部"
-                     value="财务部"></el-option>
-          <el-option key="2"
-                     label="市场部"
-                     value="市场部"></el-option>
+                   size="large">
+          <el-option v-for="item, key in query.departments"
+                     :key="key"
+                     :value="item.name" />
         </el-select>
+
         <el-input v-model="query.username"
                   placeholder="用户名"
                   class="handle-input mr10"></el-input>
@@ -231,7 +230,10 @@ export default {
   data () {
     return {
       query: {
-        address: "",
+        //搜索部门名称
+        department: "",
+        //显示部门名称
+        departments: [],
         username: "",
       },
       users: [
@@ -297,13 +299,14 @@ export default {
   },
   mounted () {
     this.getUsers();
+
   },
 
   methods: {
     // 修改每页显示的条数
     ChangePageSize (size) {
       this.pageSize = size;
-      if (this.query.username != "") {
+      if (this.query.username != "" || this.query.department != "") {
         this.queryUsername();
       } else {
         this.getUsers();
@@ -312,7 +315,7 @@ export default {
     // 修改当前页码
     ChangeCurrentPage (current_page) {
       this.currentPage = current_page;
-      if (this.query.username != "") {
+      if (this.query.username != "" || this.query.department != "") {
         this.queryUsername();
       } else {
         this.getUsers();
@@ -335,7 +338,7 @@ export default {
             this.pageTotal = rep.data.pageTotal;
             this.currentPage = rep.data.currentPage;
             this.create_time = rep.data.create_time;
-            console.log(rep.data.users);
+            this.query.departments = rep.data.departments
           }
         });
     },
@@ -344,6 +347,7 @@ export default {
         .get("/user/query", {
           params: {
             username: this.query.username,
+            department_name: this.query.department,
             page_size: this.pageSize,
             current_page: this.currentPage,
           },
@@ -362,7 +366,7 @@ export default {
     },
     //搜索用户
     handleSearch () {
-      if (this.query.username != "") {
+      if (this.query.username != "" || this.query.department != "") {
         this.queryUsername();
       } else {
         this.getUsers();
@@ -407,10 +411,6 @@ export default {
           }
         }
       )
-
-
-
-
       Object.keys(this.form).forEach((item) => {
         this.form[item] = row[item];
       });
@@ -469,18 +469,6 @@ export default {
         }
       });
     },
-    // handleDelete (row) {
-    //   this.$axios
-    //     .post("/user/delete", {
-    //       // 后端是UserRet，只要传后端参数名称就行。后端可以直接使用user.id
-    //       id: row.id,
-    //     })
-    //     .then((rep) => {
-    //       alert(rep.data.msg);
-    //       window.location.reload("/main/user_list");
-    //       window.location.reload();
-    //     });
-    // },
     handleDelete (row) {
       ElMessageBox.confirm(
         '确认删除?',

@@ -2,28 +2,31 @@
   <div class="login-wrap">
     <div class="ms-login">
       <div class="ms-title">后台管理系统</div>
-      <el-form :model="form" ref="login" label-width="0px" class="ms-content">
+      <el-form :model="form"
+               ref="login"
+               label-width="0px"
+               class="ms-content">
         <el-form-item prop="username">
-          <el-input v-model="form.username" placeholder="username">
+          <el-input v-model="form.username"
+                    placeholder="username">
             <template #prepend>
               <el-button icon="el-icon-user"></el-button>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            type="password"
-            placeholder="password"
-            v-model="form.password"
-            @keyup.enter="submitForm()"
-          >
+          <el-input type="password"
+                    placeholder="password"
+                    v-model="form.password"
+                    @keyup.enter="submitForm()">
             <template #prepend>
               <el-button icon="el-icon-lock"></el-button>
             </template>
           </el-input>
         </el-form-item>
         <div class="login-btn">
-          <el-button type="primary" @click="submitForm()">登录</el-button>
+          <el-button type="primary"
+                     @click="submitForm()">登录</el-button>
         </div>
         <!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
       </el-form>
@@ -33,8 +36,9 @@
 
 <script>
 import qs from "qs";
+import { ElMessage } from "element-plus";
 export default {
-  data() {
+  data () {
     return {
       form: {
         username: "",
@@ -43,7 +47,7 @@ export default {
     };
   },
   methods: {
-    submitForm() {
+    submitForm () {
       this.$axios
         .post(
           "/login",
@@ -60,12 +64,19 @@ export default {
               rep.data.token,
               rep.data.user.username,
             );
-            alert(rep.data.msg);
+            ElMessage(
+              {
+                message: rep.data.msg,
+                type: 'success',
+              })
             // 跳转到后台首页
             this.$router.push("/main/dashboard");
           } else {
-            
-            alert(rep.data.msg);
+            ElMessage(
+              {
+                message: rep.data.msg,
+                type: 'error',
+              })
           }
         });
     },
