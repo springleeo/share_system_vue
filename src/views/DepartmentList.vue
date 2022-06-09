@@ -199,9 +199,9 @@ export default {
         },
       ],
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 5,
       pageTotal: 300,
-      pageSizes: [2, 4, 6],
+      pageSizes: [5, 10, 20],
       editVisible: false,
       addVisible: false,
       form: {
