@@ -49,7 +49,7 @@
           <template #default="scope">
             <el-button type="text"
                        icon="el-icon-edit"
-                       @click="handleEdit(scope.$index, scope.row)">编辑
+                       @click="handleEdit(scope.row)">编辑
             </el-button>
             <el-button type="text"
                        icon="el-icon-delete"
@@ -76,22 +76,32 @@
                width="30%">
       <el-form label-width="70px">
         <el-form-item label="权限名称">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item label="URL">
-          <el-input v-model="form.url"></el-input>
+          <el-input v-model="editForm.url"></el-input>
         </el-form-item>
         <el-form-item label="请求方法">
-          <el-input v-model="form.method"></el-input>
+          <el-input v-model="editForm.method"></el-input>
         </el-form-item>
         <el-form-item label="参数">
-          <el-input v-model="form.args"></el-input>
+          <el-input v-model="editForm.args"></el-input>
         </el-form-item>
         <el-form-item label="父级菜单">
-          <el-input v-model="form.parent_name"></el-input>
+          <!-- <el-input v-model="editForm.parent_name"></el-input> -->
+          <el-select v-model="editForm.parent_name"
+                     class="m-2"
+                     placeholder="Select"
+                     size="large">
+            <!-- <el-option v-model="editForm.parent_name" :value="无"></el-option> -->
+            <el-option v-for="item, key in editForm.parent_names"
+                       :key="key"
+                       :value="item.name" />
+          </el-select>
+
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.desc"></el-input>
+          <el-input v-model="editForm.desc"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -123,11 +133,11 @@ export default {
         {
           id: 1,
           name: "权限管理",
-          url:"",
-          method:"",
-          args:[],
-          level:"",
-          parent_name:"",
+          url: "",
+          method: "",
+          args: "",
+          level: "",
+          parent_name: "",
           desc: "",
           create_time: "",
         },
@@ -141,7 +151,14 @@ export default {
       editForm: {
         id: 1,
         name: "",
+        url: "",
+        method: "",
+        args: "",
+        level: "",
+        parent_names: "",
+        parent_name: "",
         desc: "",
+        create_time: "",
       },
       addForm: {
         name: "",
@@ -154,16 +171,16 @@ export default {
     ChangePageSize (size) {
       this.pageSize = size;
       if (this.query.name != "") {
-        this.queryRolename();
+        this.queryPermissionname();
       } else {
-        this.getRoles();
+        this.getPermissions();
       }
     },
     // 修改当前页码
     ChangeCurrentPage (current_page) {
       this.currentPage = current_page;
       if (this.query.name != "") {
-        this.queryRolename();
+        this.queryPermissionname();
       } else {
         this.getPermissions();
       }
@@ -189,9 +206,9 @@ export default {
           }
         });
     },
-    queryRolename () {
+    queryPermissionname () {
       this.$axios
-        .get("/role/query", {
+        .get("/permission/query", {
           params: {
             name: this.query.name,
             page_size: this.pageSize,
@@ -213,13 +230,25 @@ export default {
     //搜索
     handleSearch () {
       if (this.query.name != "") {
-        this.queryRolename();
+        this.queryPermissionname();
       } else {
-        this.getRoles();
+        this.getPermissions();
       }
     },
     //触发编辑按钮
     handleEdit (row) {
+      //请求后端的部门数据
+      this.$axios.get('/permission/get_no_parent_names', {
+        params: {
+          id: row.id
+        }
+      }).then(
+        (rep) => {
+          if (rep.status == 200) {
+            this.editForm.parent_names = rep.data.parent_names
+          }
+        }
+      )
       Object.keys(this.editForm).forEach((item) => {
         this.editForm[item] = row[item];
       });
@@ -227,17 +256,22 @@ export default {
     },
     //保存编辑
     saveEdit () {
-      this.$axios.post('/role/edit', {
+      this.$axios.post('/permission/edit', {
         id: this.editForm.id,
         name: this.editForm.name,
+        url: this.editForm.url,
+        method: this.editForm.method,
+        args: this.editForm.args,
+        level: this.editForm.level,
+        parent_name: this.editForm.parent_name,
         desc: this.editForm.desc,
-        // state: this.form.state
+        create_time: this.editForm.create_time
       }).then((rep) => {
         ElMessage({
           message: '更新成功',
           type: 'success'
         })
-        window.location.reload("/main/role_list");
+        window.location.reload("/main/permission_list");
 
       })
     },
@@ -254,7 +288,7 @@ export default {
       )
         .then(() => {
           this.$axios
-            .post("/role/delete", {
+            .post("/permission/delete", {
               // 后端是RoleRet，只要传后端参数名称就行。后端可以直接使用role.id
               id: row.id,
             })
@@ -263,7 +297,7 @@ export default {
                 message: '删除成功',
                 type: 'success'
               })
-              window.location.reload("/main/role_list");
+              window.location.reload("/main/permission_list");
               window.location.reload();
             });
         })
@@ -279,7 +313,7 @@ export default {
       this.addVisible = true;
     },
     saveAdd () {
-      this.$axios.post("/role/add", {
+      this.$axios.post("/permission/add", {
         name: this.addForm.name,
         leader: this.addForm.leader,
         desc: this.addForm.desc,
@@ -290,7 +324,7 @@ export default {
             message: '添加成功',
             type: 'success'
           })
-          window.location.reload("/main/role_list");
+          window.location.reload("/main/permission_list");
           window.location.reload();
         }
       });
