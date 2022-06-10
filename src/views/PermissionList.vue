@@ -93,7 +93,7 @@
                      class="m-2"
                      placeholder="Select"
                      size="large">
-            <!-- <el-option v-model="editForm.parent_name" :value="无"></el-option> -->
+            <el-option v-model="无" value="无">无</el-option>
             <el-option v-for="item, key in editForm.parent_names"
                        :key="key"
                        :value="item.name" />
@@ -262,10 +262,8 @@ export default {
         url: this.editForm.url,
         method: this.editForm.method,
         args: this.editForm.args,
-        level: this.editForm.level,
         parent_name: this.editForm.parent_name,
         desc: this.editForm.desc,
-        create_time: this.editForm.create_time
       }).then((rep) => {
         ElMessage({
           message: '更新成功',
