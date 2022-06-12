@@ -15,6 +15,9 @@
         <el-button type="primary"
                    icon="el-icon-search"
                    @click="handleSearch">搜索</el-button>
+        <el-button type="primary"
+                   icon="el-icon-plus"
+                   @click="handleAdd">添加</el-button>
       </div>
       <el-table :data="permissions"
                 border
@@ -39,10 +42,8 @@
                          label="父级菜单"></el-table-column>
         <el-table-column prop="desc"
                          label="描述"></el-table-column>
-
         <el-table-column prop="create_time"
                          label="创建时间"></el-table-column>
-
         <el-table-column label="操作"
                          width="180"
                          align="center">
@@ -54,7 +55,7 @@
             <el-button type="text"
                        icon="el-icon-delete"
                        class="red"
-                       @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                       @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -93,7 +94,8 @@
                      class="m-2"
                      placeholder="Select"
                      size="large">
-            <el-option v-model="无" value="无">无</el-option>
+            <el-option label="无"
+                       value="无">无</el-option>
             <el-option v-for="item, key in editForm.parent_names"
                        :key="key"
                        :value="item.name" />
@@ -109,6 +111,52 @@
           <el-button @click="editVisible = false">取 消</el-button>
           <el-button type="primary"
                      @click="saveEdit">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 添加弹出框 -->
+    <el-dialog v-model="addVisible"
+               title="添加"
+               width="30%">
+      <el-form :model="addForm" label-width="70px">
+        <el-form-item label="权限名称">
+          <el-input v-model="addForm.name" />
+        </el-form-item>
+        <el-form-item label="url">
+          <el-input v-model="addForm.url" />
+        </el-form-item>
+        <el-form-item label="请求方法">
+          <el-input v-model="addForm.method" />
+        </el-form-item>
+        <el-form-item label="参数">
+          <el-input v-model="addForm.args" />
+        </el-form-item>
+        <!-- <el-form-item label="菜单级别">
+          <el-input v-model="addForm.level"
+                    autocomplete="off" />
+        </el-form-item> -->
+        <el-form-item label="父级菜单">
+          <el-select v-model="addForm.parent_name"
+                     class="m-2"
+                     placeholder="Select"
+                     size="large">
+            <el-option label="无"
+                       value="无">无</el-option>
+            <el-option v-for="item, key in addForm.parent_names"
+                       :key="key"
+                       :value="item.name" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="addForm.desc" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addVisible = false">取消</el-button>
+          <el-button type="primary"
+                     @click="saveAdd">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -162,7 +210,14 @@ export default {
       },
       addForm: {
         name: "",
+        url: "",
+        method: "",
+        args: "",
+        level: "",
+        parent_names: "",
+        parent_name: "",
         desc: "",
+        create_time: "",
       }
     }
   },
@@ -270,7 +325,6 @@ export default {
           type: 'success'
         })
         window.location.reload("/main/permission_list");
-
       })
     },
     //添加角色
@@ -309,13 +363,19 @@ export default {
     //弹出添加框
     handleAdd () {
       this.addVisible = true;
+      this.$axios.get('/permission/get_parent_names').then((rep) => {
+        console.log(rep)
+        this.addForm.parent_names = rep.data.parent_names
+      })
     },
     saveAdd () {
       this.$axios.post("/permission/add", {
         name: this.addForm.name,
-        leader: this.addForm.leader,
+        url: this.addForm.url,
+        method: this.addForm.method,
+        args: this.addForm.args,
+        parent_name: this.addForm.parent_name,
         desc: this.addForm.desc,
-        // state: this.addForm.state
       }).then((rep) => {
         if (rep.data.code == 200) {
           ElMessage({
