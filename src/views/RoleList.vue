@@ -9,18 +9,16 @@
     </div>
     <div class="container">
       <div class="handle-box">
-
         <el-input v-model="query.name"
                   placeholder="角色名称"
                   class="handle-input mr10"></el-input>
         <el-button type="primary"
                    icon="el-icon-search"
                    @click="handleSearch">搜索</el-button>
-      </div>
-      <div class="addbottom">
         <el-button type="primary"
                    @click="handleAdd">添加</el-button>
       </div>
+
       <el-table :data="roles"
                 border
                 class="table"
@@ -36,6 +34,22 @@
                          label="角色描述"></el-table-column>
         <el-table-column prop="create_time"
                          label="注册时间"></el-table-column>
+        <el-table-column label="配置"
+                         width="180"
+                         align="center">
+          <template #default="scope">
+            <el-button type="primary"
+                       icon="el-icon-user"
+                       @click="userConfig(scope.row)"
+                       circle>
+            </el-button>
+            <el-button type="primary"
+                       icon="el-icon-lock"
+                       @click="permissionConfig(scope.row)"
+                       circle>
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作"
                          width="180"
                          align="center">
@@ -47,7 +61,8 @@
             <el-button type="text"
                        icon="el-icon-delete"
                        class="red"
-                       @click="handleDelete(scope.row)">删除</el-button>
+                       @click="handleDelete(scope.row)">删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,6 +98,7 @@
         </span>
       </template>
     </el-dialog>
+
     <!-- 添加弹出框 -->
     <el-dialog title="添加"
                v-model="addVisible"
@@ -94,18 +110,46 @@
         <el-form-item label="角色描述">
           <el-input v-model="addForm.desc"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="状态">
-          <el-radio-group v-model="addForm.state">
-            <el-radio :label=1>启用</el-radio>
-            <el-radio :label=2>停用</el-radio>
-          </el-radio-group>
-        </el-form-item> -->
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="addVisible = false">取 消</el-button>
           <el-button type="primary"
                      @click="saveAdd">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 用户配置弹出框 -->
+    <el-dialog title="用户配置"
+               v-model="userConfigVisible"
+               width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="角色名">
+          <el-input v-model="userConfigForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="userConfigForm.desc"></el-input>
+        </el-form-item>
+        <el-form-item label="配置用户">
+          <el-select v-model="configUsers"
+                     multiple
+                     clearable
+                     placeholder="Select"
+                     style="width: 240px">
+            <el-option v-for="item in configUsersOptions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value" />
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="userConfigVisible = false">取 消</el-button>
+          <el-button type="primary"
+                     @click="saveUserConfig">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -139,9 +183,11 @@ export default {
       currentPage: 1,
       pageSize: 5,
       pageTotal: 300,
-      pageSizes: [5,10, 20],
+      pageSizes: [5, 10, 20],
       editVisible: false,
       addVisible: false,
+      userConfigVisible: false,
+      permissionConfigVisible: false,
       editForm: {
         id: 1,
         name: "",
@@ -150,7 +196,29 @@ export default {
       addForm: {
         name: "",
         desc: "",
-      }
+      },
+      configUsers: [1],
+      configUsersOptions: [
+        // {
+        //   label: 'a',
+        //   value: 1
+        // },
+        // {
+        //   label: 'b',
+        //   value: 2
+        // },
+        // {
+        //   label: 'c',
+        //   value: 3
+        // },
+      ],
+      userConfigForm: {
+        id: 1,
+        name: "",
+        desc: "",
+      },
+      permissionConfigForm: {
+      },
     }
   },
   methods: {
@@ -222,6 +290,37 @@ export default {
         this.getRoles();
       }
     },
+    //用户配置按钮
+    userConfig (row) {
+      this.$axios.get('/role/get_all_users').then((rep) => {
+        this.configUsersOptions = rep.data.config_users_options
+      });
+      this.$axios.get('/role/get_role_users', {
+        params: { role_id: row.id }
+      }).then((rep) => {
+        this.configUsers = rep.data.config_users;
+      });
+      Object.keys(this.userConfigForm).forEach((item) => {
+        this.userConfigForm[item] = row[item];
+      });
+      this.userConfigVisible = true;
+    },
+
+    //保存用户配置
+    saveUserConfig () {
+      const formData = new FormData()
+      formData.append('role_id', this.userConfigForm.id)
+      formData.append('config_users', this.configUsers)
+      this.$axios.post('/role/save_config_users', formData).then((rep) => {
+        ElMessage({
+          message: '更新成功',
+          type: 'success'
+        })
+        window.location.reload("/main/role_list");
+
+      })
+    },
+
     //触发编辑按钮
     handleEdit (row) {
       Object.keys(this.editForm).forEach((item) => {

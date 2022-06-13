@@ -25,10 +25,7 @@
         <el-button type="primary"
                    icon="el-icon-search"
                    @click="handleSearch">搜索</el-button>
-      </div>
-      <!-- 添加数据 -->
-      <div>
-        <el-button type="primary"
+                <el-button type="primary"
                    class="el-icon-lx-add"
                    id="addbottom"
                    @click="handleAdd">添加</el-button>

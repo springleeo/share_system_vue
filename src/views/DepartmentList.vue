@@ -15,8 +15,6 @@
         <el-button type="primary"
                    icon="el-icon-search"
                    @click="handleSearch">搜索</el-button>
-      </div>
-      <div class="addbottom">
         <el-button type="primary"
                    @click="handleAdd">添加</el-button>
       </div>
