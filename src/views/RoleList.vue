@@ -126,10 +126,10 @@
                width="30%">
       <el-form label-width="70px">
         <el-form-item label="角色名">
-          <el-input v-model="userConfigForm.name"></el-input>
+          <el-input v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="userConfigForm.desc"></el-input>
+          <el-input v-model="editForm.desc"></el-input>
         </el-form-item>
         <el-form-item label="配置用户">
           <el-select v-model="configUsers"
@@ -153,6 +153,37 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 菜单配置弹出框 -->
+    <el-dialog title="菜单配置"
+               v-model="permissionConfigVisible"
+               width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="角色名">
+          <el-input v-model="editForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="editForm.desc"></el-input>
+        </el-form-item>
+        <el-form-item label="配置菜单">
+          <el-tree :data="permissions_tree"
+                   show-checkbox
+                   node-key="id"
+                   :default-expanded-keys="checked_permissions"
+                   :default-checked-keys="checked_permissions"
+                   ref="perms" />
+        </el-form-item>
+
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="permissionConfigVisible = false">取 消</el-button>
+          <el-button type="primary"
+                     @click="savePermissionConfig">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -212,13 +243,32 @@ export default {
         //   value: 3
         // },
       ],
-      userConfigForm: {
-        id: 1,
-        name: "",
-        desc: "",
-      },
-      permissionConfigForm: {
-      },
+      checked_permissions: [],
+      permissions_tree: [
+      //   {
+      //     id: 1,
+      //     label: '用户管理',
+      //     children: [
+      //       {
+      //         id: 4,
+      //         label: '用户列表',
+      //         children: []
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     id: 2,
+      //     label: '权限管理',
+      //     children: [
+      //       {
+      //         id: 6,
+      //         label: '权限列表',
+      //         children: []
+      //       }
+      //     ]
+      //   }
+      ]
+
     }
   },
   methods: {
@@ -300,8 +350,8 @@ export default {
       }).then((rep) => {
         this.configUsers = rep.data.config_users;
       });
-      Object.keys(this.userConfigForm).forEach((item) => {
-        this.userConfigForm[item] = row[item];
+      Object.keys(this.editForm).forEach((item) => {
+        this.editForm[item] = row[item];
       });
       this.userConfigVisible = true;
     },
@@ -309,7 +359,7 @@ export default {
     //保存用户配置
     saveUserConfig () {
       const formData = new FormData()
-      formData.append('role_id', this.userConfigForm.id)
+      formData.append('role_id', this.editForm.id)
       formData.append('config_users', this.configUsers)
       this.$axios.post('/role/save_config_users', formData).then((rep) => {
         ElMessage({
@@ -320,7 +370,43 @@ export default {
 
       })
     },
+    //菜单权限配置按钮
+    permissionConfig (row) {
+      // 获取所有菜单列表、获取已配置的菜单列表
+      const formData = new FormData()
+      formData.append('role_id', row.id)
+      this.$axios.post('/role/get_permissions_info', formData).then((rep) => {
+        this.checked_permissions = rep.data.permissions_info.checked_permissions,
+          this.permissions_tree = rep.data.permissions_info.permissions_tree
+      });
+      Object.keys(this.editForm).forEach((item) => {
+        this.editForm[item] = row[item];
+      });
+      this.permissionConfigVisible = true;
+    },
 
+    //保存菜单配置
+    savePermissionConfig () {
+      const selected_permissions = [];
+      const res = this.$refs.perms.getCheckedNodes();
+      res.forEach((item) => {
+        selected_permissions.push(item.id)
+      });
+      const formData = new FormData();
+      formData.append('role_id', this.editForm.id)
+      formData.append('selected_permissions', selected_permissions)
+      console.log(this.editForm.id)
+      console.log(selected_permissions)
+
+      this.$axios.post('/role/save_permission_config', formData).then((rep) => {
+        ElMessage({
+          message: '更新成功',
+          type: 'success'
+        })
+        window.location.reload("/main/role_list");
+
+      })
+    },
     //触发编辑按钮
     handleEdit (row) {
       Object.keys(this.editForm).forEach((item) => {
