@@ -43,8 +43,8 @@ const routes = [
                 component: () => import ( /* webpackChunkName: "table" */ "../views/RoleList.vue")
             }, 
             {
-                path: "permissions",
-                name: "permissions",
+                path: "permission_list",
+                name: "permission_list",
                 meta: {
                     title: '权限列表'
                 },

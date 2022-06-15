@@ -84,10 +84,10 @@
                width="30%">
       <el-form label-width="70px">
         <el-form-item label="角色名称">
-          <el-input v-model="editForm.name"></el-input>
+          <el-input v-model="editForm.name" ></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="editForm.desc"></el-input>
+          <el-input v-model="editForm.desc" ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -126,10 +126,10 @@
                width="30%">
       <el-form label-width="70px">
         <el-form-item label="角色名">
-          <el-input v-model="editForm.name"></el-input>
+          <el-input v-model="editForm.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="editForm.desc"></el-input>
+          <el-input v-model="editForm.desc" disabled></el-input>
         </el-form-item>
         <el-form-item label="配置用户">
           <el-select v-model="configUsers"
@@ -160,10 +160,10 @@
                width="30%">
       <el-form label-width="70px">
         <el-form-item label="角色名">
-          <el-input v-model="editForm.name"></el-input>
+          <el-input v-model="editForm.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="editForm.desc"></el-input>
+          <el-input v-model="editForm.desc" disabled></el-input>
         </el-form-item>
         <el-form-item label="配置菜单">
           <el-tree :data="permissions_tree"
