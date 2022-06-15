@@ -42,6 +42,8 @@
                          label="父级菜单"></el-table-column>
         <el-table-column prop="desc"
                          label="描述"></el-table-column>
+        <el-table-column prop="icon"
+                         label="图标"></el-table-column>
         <el-table-column prop="create_time"
                          label="创建时间"></el-table-column>
         <el-table-column label="操作"
@@ -105,6 +107,9 @@
         <el-form-item label="描述">
           <el-input v-model="editForm.desc"></el-input>
         </el-form-item>
+                <el-form-item label="图标">
+          <el-input v-model="editForm.icon"></el-input>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -119,7 +124,8 @@
     <el-dialog v-model="addVisible"
                title="添加"
                width="30%">
-      <el-form :model="addForm" label-width="70px">
+      <el-form :model="addForm"
+               label-width="70px">
         <el-form-item label="权限名称">
           <el-input v-model="addForm.name" />
         </el-form-item>
@@ -150,6 +156,9 @@
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="addForm.desc" />
+        </el-form-item>
+                <el-form-item label="图标">
+          <el-input v-model="addForm.icon" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -187,6 +196,7 @@ export default {
           level: "",
           parent_name: "",
           desc: "",
+          icon:"",
           create_time: "",
         },
       ],
@@ -206,6 +216,7 @@ export default {
         parent_names: "",
         parent_name: "",
         desc: "",
+        icon:"",
         create_time: "",
       },
       addForm: {
@@ -217,6 +228,7 @@ export default {
         parent_names: "",
         parent_name: "",
         desc: "",
+        icon:"",
         create_time: "",
       }
     }
@@ -319,6 +331,7 @@ export default {
         args: this.editForm.args,
         parent_name: this.editForm.parent_name,
         desc: this.editForm.desc,
+        icon: this.editForm.icon,
       }).then((rep) => {
         ElMessage({
           message: '更新成功',
@@ -376,6 +389,7 @@ export default {
         args: this.addForm.args,
         parent_name: this.addForm.parent_name,
         desc: this.addForm.desc,
+        icon: this.addForm.icon,
       }).then((rep) => {
         if (rep.data.code == 200) {
           ElMessage({
